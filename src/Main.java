@@ -1,6 +1,7 @@
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -38,6 +39,10 @@ public class Main {
     private static SensorTask t1, t2, t3, h1, s1;
 
     public static void main(String[] args) {
+        try {
+            Files.createDirectories(Path.of("logs"));
+        } catch (Exception ignored) {}
+
         int httpPort = EdgeTelemetryServer.DEFAULT_PORT;
         int modbusPort = ModbusTcpSensorBridge.DEFAULT_PORT;
         String zoneId = "ZONE-01";
@@ -60,7 +65,14 @@ public class Main {
                 if (arg.contains("=")) {
                     pathStr = arg.substring(arg.indexOf('=') + 1).trim();
                 }
-                boolean pass = TelemetryLogger.verifyAuditChain(Path.of(pathStr));
+                Path auditPath = Path.of(pathStr);
+                try {
+                    Path parent = auditPath.toAbsolutePath().getParent();
+                    if (parent != null) {
+                        Files.createDirectories(parent);
+                    }
+                } catch (Exception ignored) {}
+                boolean pass = TelemetryLogger.verifyAuditChain(auditPath);
                 System.exit(pass ? 0 : 1);
             } else if ("--headless".equalsIgnoreCase(arg)) {
                 headless = true;
