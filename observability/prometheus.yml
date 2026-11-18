@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+
+scrape_configs:
+  - job_name: 'agriguard-scada'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['agriguard-zone-01:8085', 'agriguard-zone-02:8086']
+        labels:
+          environment: 'production-estate'
+          cluster: 'highland-canopy'

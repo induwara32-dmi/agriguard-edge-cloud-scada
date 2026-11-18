@@ -1,0 +1,115 @@
+version: '3.8'
+
+services:
+  # ==============================================================================
+  # ZONE 01: Commercial Strawberry Production Canopy
+  # ==============================================================================
+  agriguard-zone-01:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agriguard-zone-01
+    restart: unless-stopped
+    ports:
+      - "8085:8085"   # Zone 01 Embedded Edge REST, SSE & Prometheus Telemetry Gateway
+      - "5020:5020"   # Zone 01 Modbus/TCP Binary Transducer Protocol Bridge
+    volumes:
+      - ./logs:/opt/agriguard/logs
+    command:
+      - "--headless"
+      - "--port=8085"
+      - "--modbus-port=5020"
+      - "--zone-id=ZONE-01"
+      - "--zone-name=Highland Strawberry Canopy A"
+      - "--profile=STRAWBERRY"
+      - "--log-file=logs/zone01_strawberry_telemetry.csv"
+      - "--auth-mode=strict"
+      - "--auth-secret=agriguard-edge-dev-key-2026"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8085/api/v1/status"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # ==============================================================================
+  # ZONE 02: High-Humidity Camellia Sinensis Tea Nursery
+  # ==============================================================================
+  agriguard-zone-02:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agriguard-zone-02
+    restart: unless-stopped
+    ports:
+      - "8086:8086"   # Zone 02 Embedded Edge REST, SSE & Prometheus Telemetry Gateway
+      - "5021:5021"   # Zone 02 Modbus/TCP Binary Transducer Protocol Bridge
+    volumes:
+      - ./logs:/opt/agriguard/logs
+    command:
+      - "--headless"
+      - "--port=8086"
+      - "--modbus-port=5021"
+      - "--zone-id=ZONE-02"
+      - "--zone-name=Highland Tea Nursery House B"
+      - "--profile=TEA_NURSERY"
+      - "--log-file=logs/zone02_tea_telemetry.csv"
+      - "--auth-mode=strict"
+      - "--auth-secret=agriguard-edge-dev-key-2026"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8086/api/v1/status"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # ==============================================================================
+  # PROMETHEUS: Time-Series Metrics Ingestion Engine
+  # ==============================================================================
+  prometheus:
+    image: prom/prometheus:v2.50.0
+    container_name: agriguard-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - agriguard-zone-01
+      - agriguard-zone-02
+
+  # ==============================================================================
+  # GRAFANA: Industrial SCADA Telemetry & Schedulability Dashboard
+  # ==============================================================================
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: agriguard-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./observability/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./observability/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+    depends_on:
+      - prometheus
+
+  # ==============================================================================
+  # CLOUD COMMAND CENTER: Next.js 14 Operator SCADA Cockpit
+  # ==============================================================================
+  cloud-dashboard:
+    build:
+      context: ./cloud-dashboard
+      dockerfile: Dockerfile
+    container_name: agriguard-cloud-dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - agriguard-zone-01
+      - agriguard-zone-02

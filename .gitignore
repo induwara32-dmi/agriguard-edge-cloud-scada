@@ -1,0 +1,8 @@
+﻿bin/
+*.class
+logs/*.csv
+logs/*.log
+cloud-dashboard/node_modules/
+cloud-dashboard/.next/
+.DS_Store
+Thumbs.db

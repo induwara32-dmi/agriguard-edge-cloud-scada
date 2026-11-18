@@ -1,0 +1,311 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "Microclimate & Canopy Telemetry",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "max": 40,
+          "min": 10,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "green", "value": 18 },
+              { "color": "orange", "value": 28 },
+              { "color": "red", "value": 32 }
+            ]
+          },
+          "unit": "celsius"
+        }
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 1 },
+      "id": 1,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "expr": "agriguard_voted_temperature_celsius",
+          "legendFormat": "{{zone}} Voted Temp",
+          "refId": "A"
+        }
+      ],
+      "title": "Voted Canopy Temperature",
+      "type": "gauge"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "max": 2.5,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "green", "value": 0.6 },
+              { "color": "yellow", "value": 1.2 },
+              { "color": "red", "value": 1.8 }
+            ]
+          },
+          "unit": "pressurekpa"
+        }
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 1 },
+      "id": 2,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "title": "Vapor Pressure Deficit (VPD)",
+      "type": "gauge",
+      "targets": [
+        {
+          "expr": "agriguard_vpd_kpa",
+          "legendFormat": "{{zone}} VPD",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "green", "text": "LOW" }, "1": { "color": "yellow", "text": "MODERATE" }, "2": { "color": "orange", "text": "HIGH" }, "3": { "color": "red", "text": "CRITICAL" } }, "type": "value" }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "orange", "value": 2 },
+              { "color": "red", "value": 3 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "title": "Fungal / Botrytis Condensation Risk",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "agriguard_fungal_risk_level",
+          "legendFormat": "{{zone}} Fungal Risk",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            { "options": { "0": { "color": "green", "text": "NOMINAL" }, "1": { "color": "red", "text": "SAFE-STATE INTERLOCKED" } }, "type": "value" }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 18, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "title": "Safety Interlock Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "agriguard_safe_state_active",
+          "legendFormat": "{{zone}} Interlock",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 7 },
+      "id": 101,
+      "title": "Predictive Agronomy & Dew Point Dynamics",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "id": 5,
+      "title": "Temperature vs Dew Point & Spread",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "agriguard_voted_temperature_celsius",
+          "legendFormat": "{{zone}} Canopy Temp (°C)",
+          "refId": "A"
+        },
+        {
+          "expr": "agriguard_dew_point_celsius",
+          "legendFormat": "{{zone}} Dew Point Td (°C)",
+          "refId": "B"
+        },
+        {
+          "expr": "agriguard_dew_point_spread_celsius",
+          "legendFormat": "{{zone}} Spread ΔT (°C)",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "id": 6,
+      "title": "Relative Humidity & Soil Moisture",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "agriguard_humidity_percent",
+          "legendFormat": "{{zone}} RH (%)",
+          "refId": "A"
+        },
+        {
+          "expr": "agriguard_soil_moisture_percent",
+          "legendFormat": "{{zone}} Soil Moisture (%)",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 16 },
+      "id": 102,
+      "title": "Rate-Monotonic Real-Time Schedulability & Fault Tolerance",
+      "type": "row"
+    },
+    {
+      "datasource": "Prometheus",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 0.5 },
+              { "color": "red", "value": 0.7568 }
+            ]
+          },
+          "unit": "percentunit"
+        }
+      },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 17 },
+      "id": 7,
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+      },
+      "title": "Rate-Monotonic CPU Utilization",
+      "type": "gauge",
+      "targets": [
+        {
+          "expr": "agriguard_rm_utilization_ratio",
+          "legendFormat": "{{zone}} RM CPU",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "gridPos": { "h": 6, "w": 10, "x": 6, "y": 17 },
+      "id": 8,
+      "title": "Worst-Case Execution Times (WCET)",
+      "type": "bargauge",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "max": 50,
+          "color": { "mode": "palette-classic" }
+        }
+      },
+      "targets": [
+        {
+          "expr": "agriguard_task_wcet_ms",
+          "legendFormat": "{{task}}",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "datasource": "Prometheus",
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 17 },
+      "id": 9,
+      "title": "TMR Masked & Watchdog Timeouts",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "agriguard_tmr_masked_total",
+          "legendFormat": "TMR Masked ({{zone}})",
+          "refId": "A"
+        },
+        {
+          "expr": "agriguard_watchdog_failures_total",
+          "legendFormat": "Watchdog Drops ({{zone}})",
+          "refId": "B"
+        }
+      ]
+    }
+  ],
+  "refresh": "2s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["agriguard", "scada", "real-time", "industrial"],
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "AgriGuard RT-SCADA Estate Observability",
+  "version": 1
+}
